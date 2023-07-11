@@ -1,8 +1,8 @@
 # Product Store API
 
 This API allows you to place a product order which will be ready for pick-up in the store.<br/>
-The API is available at `http://localhost/api/v0/prod-man/swagger-ui.html#` <br/>
-Alternative URL: `http://localhost/api/v0/prod-man/swagger-ui.html#` (HTTP only!) <br/> 
+The API is available at [`Swagger`](http://localhost/api/v0/prod-man/swagger-ui.html#) <br/>
+Alternative URL: [`Swagger`](http://localhost/api/v0/prod-man/swagger-ui.html#)  (HTTP only!) <br/> 
 
 Contact: 
 - Website: `http://blog.testek.vn`
