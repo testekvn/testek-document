@@ -1,0 +1,13 @@
+name: Execute Postman Monitor
+on:
+  pull_request:
+jobs:
+  execute-postman-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Postman Monitor
+        id: executeMonitor
+        uses: postmanlabs/execute-postman-monitor@v1
+        with:
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          monitor-id: ${{ vars.MONITOR_ID }}
