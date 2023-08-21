@@ -1,6 +1,5 @@
 name: Execute Postman Monitor
-on:
-  pull_request:
+on: push
 jobs:
   execute-postman-monitor:
     runs-on: ubuntu-latest
