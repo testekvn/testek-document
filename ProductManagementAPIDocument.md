@@ -526,6 +526,35 @@ Delete a single supplier.
 
 ## Customer
 ### Create a customer
+
+Create a new customer
+
+**`POST /customer`** 
+
+**Parameters**
+
+| Name                | Type   | In     | Required | Description                                                                                                                                        |
+| ------------------- |------- |--------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Authorization`     | string | header | Yes      | The bearer token of the API client.  |
+| `address`           | string | body   | Yes      | The address of the customer.          |
+| `city`              | string | body   | Yes      | The city name of the customer. |
+| `country`           | string | body   | Yes      | The country name of the customer. |
+| `email`             | string | body   | Yes      | The email of the customer.|
+| `name`              | string | body   | Yes      | The name of the customer.|
+| `phoneNum`          | string | body   | Yes      | A valid phone number has 10 digits. |
+| `postalCode`        | string | body   | Yes      | A short series of letters and/or numbers that is part of an address. |                                                                                                 |
+
+**Status codes**
+
+| Status code        | Description                                         | 
+|--------------------|-----------------------------------------------------|
+| `201 Created`      | Indicates a successful response.                    | 
+| `400 Bad Request`  | Indicates that the parameters provided are invalid. | 
+| `401 Unauthorized` | Indicates that the token provided are invalid.      | 
+| `403 Forbidden`    | Indicates that the user don't have the permission.  | 
+| `404 Not Found`    | Indicates that the API Path provided are invalid.   | 
+| `405 Method Not Allowed`  | Indicates that the API method provided are invalid. | 
+
 ### Update a customer
 ### Get all customer
 ### Get a customer
@@ -704,7 +733,7 @@ Deletes an item in the cart.
 
 Returns all orders created by the API client.
 
-**`GET /orders`**
+**`GET /order/search`**
 
 **Parameters**
 
@@ -718,19 +747,20 @@ Returns all orders created by the API client.
 | ---------------- | ------------------------------------------------------------------------------------------------------ |
 | 200 OK           | Indicates a successful response.                                                                       |
 | 401 Unauthorized | Indicates that the request has not been authenticated. Check the response body for additional details. |
+| 404 Not found    | Indicates that there is no order with the specified id associated with the API client.                 |
 
 ### Get a single order
 
 Returns a single order.
 
-**`GET /orders/:orderId`**
+**`GET /orders/:orderId/detail`**
 
 **Parameters**
 
 | Name            | Type    | In     | Required | Description                         |
 | --------------- | ------- | ------ | -------- | ----------------------------------- |
 | `Authorization` | string  | header | Yes      | The bearer token of the API client. |
-| `orderId`       | string  | path   | Yes      | The order id.                       |
+| `orderId`       | UUID    | path   | Yes      | The order id.                       |
 | `invoice`       | boolean | query  | No       | Show the PDF invoice.               |
 
 **Status codes**
@@ -743,26 +773,29 @@ Returns a single order.
 
 ### Create a new order
 
-**`POST /orders`**
+**`POST /order`**
 
 The request body needs to be in JSON format.
-Once the order has been successfully submitted, the cart is deleted.
 
 **Parameters**
 
-| Name            | Type   | In     | Required | Description                          |
-| --------------- | ------ | ------ | -------- | ------------------------------------ |
-| `Authorization` | string | header | Yes      | The bearer token of the API client.  |
-| `cartId`        | string | body   | Yes      | The cart id                          |
-| `customerName`  | string | body   | Yes      | The name of the customer.            |
-| `comment`       | string | body   | No       | A comment associated with the order. |
+| Name                | Type   | In     | Required | Description                          |
+| ------------------- | ------ | ------ | -------- | ------------------------------------ |
+| `Authorization`     | string | header | Yes      | The bearer token of the API client.  |
+| `customerId`        | UUID   | body   | Yes      | The customer id                      |
+| `address`           | string | body   | Yes      | The address of the customer.          |
+| `city`              | string | body   | Yes      | The city name of the customer. |
+| `country`           | string | body   | Yes      | The country name of the customer. |
+| `email`             | string | body   | Yes      | The email of the customer.|
+| `name`              | string | body   | Yes      | The name of the customer.|
+| `phoneNum`          | string | body   | Yes      | A valid phone number has 10 digits. |
+| `postalCode`        | string | body   | Yes      | A short series of letters and/or numbers that is part of an address |
 
 Example request body:
 
 ```
 {
-    "cartId": "ZFe4yhG5qNhmuNyrbLWa4",
-    "customerName": "John Doe"
+  []
 }
 ```
 
@@ -774,26 +807,29 @@ Example request body:
 | 400 Bad Request  | Indicates that the parameters provided are invalid.                                                    |
 | 401 Unauthorized | Indicates that the request has not been authenticated. Check the response body for additional details. |
 
-### Update an order
-
-**`PATCH /orders/:orderId`**
+### Edit an order
+**`PUT /order/:orderId`**
 
 The request body needs to be in JSON format.
-
 **Parameters**
 
 | Name            | Type   | In     | Required | Description                          |
 | --------------- | ------ | ------ | -------- | ------------------------------------ |
 | `Authorization` | string | header | Yes      | The bearer token of the API client.  |
-| `orderId`       | string | path   | Yes      | The order id.                        |
-| `customerName`  | string | body   | No       | The name of the customer.            |
-| `comment`       | string | body   | No       | A comment associated with the order. |
+| `customerId`    | UUID   | body   | Yes      | The customer id                      |
+| `address`       | string | body   | Yes      | The address of the customer.          |
+| `city`          | string | body   | Yes      | The city name of the customer. |
+| `country`       | string | body   | Yes      | The country name of the customer. |
+| `email`         | string | body   | Yes      | The email of the customer.|
+| `name`          | string | body   | Yes      | The name of the customer.|
+| `phoneNum`      | string | body   | Yes      | A valid phone number has 10 digits. |
+| `postalCode`    | string | body   | Yes      | A short series of letters and/or numbers that is part of an address |
 
 **Status codes**
 
 | Status code      | Description                                                                                            |
 | ---------------- | ------------------------------------------------------------------------------------------------------ |
-| 204 No Content   | Indicates that the order has been updated successfully.                                                |
+| 200 OK           | Indicates that the order has been updated successfully.                                                |
 | 400 Bad Request  | Indicates that the parameters provided are invalid.                                                    |
 | 401 Unauthorized | Indicates that the request has not been authenticated. Check the response body for additional details. |
 | 404 Not found    | Indicates that there is no order with the specified id associated with the API client.                 |
@@ -802,29 +838,63 @@ Example request body:
 
 ```
 {
- "customerName": "Joe Doe"
+[]
 }
 ```
 
-### Delete an order
+### Create/Update a new order item
 
-**`DELETE /orders/:orderId`**
+**`POST /order/add-items`**
+
+The request body needs to be in JSON format.
+
+**Parameters**
+
+| Name            | Type   | In     | Required | Description                          |
+| --------------- | ------ | ------ | -------- | ------------------------------------ |
+| `Authorization` | string | header | Yes      | The bearer token of the API client.  |
+| `orderId`       | UUID   | path   | Yes      | The order id.                        |
+| `discountRate`  | string | body   | Yes      | A rate used for discounting bills of exchange            |
+| `productId`     | UUID   | body   | Yes      | Specifies the product id with status ACTIVE
+| `quantity`      | string | body   | Yes      | An amount or a number of product. |
+| `variant`       | string | body   | No       | Specifies the variant of something that is slightly different from other similar things |
+
+**Status codes**
+
+| Status code      | Description                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------ |
+| 201 Created   | Indicates that the order has been added the order items successfully.                                                |
+| 400 Bad Request  | Indicates that the parameters provided are invalid.                                                    |
+| 401 Unauthorized | Indicates that the request has not been authenticated. Check the response body for additional details. |
+| 404 Not found    | Indicates that there is no order-items with the specified id associated with the API client.                 |
+
+Example response:
+
+```
+{
+[]
+}
+```
+
+### Get detail order item
+
+**`GET /order/order-items/:orderItemId/detail`**
 
 **Parameters**
 
 | Name            | Type   | In     | Required | Description                         |
 | --------------- | ------ | ------ | -------- | ----------------------------------- |
 | `Authorization` | string | header | Yes      | The bearer token of the API client. |
-| `orderId`       | string | path   | Yes      | The order id.                       |
+| `orderItemId `  | UUID   | path   | Yes      | The order-items id.                 |
 
 **Status codes**
 
 | Status code      | Description                                                                                            |
 | ---------------- | ------------------------------------------------------------------------------------------------------ |
-| 204 No Content   | Indicates that the order has been deleted successfully.                                                |
+| 200 OK           | Indicates that the order has been deleted successfully.                                                |
 | 400 Bad Request  | Indicates that the parameters provided are invalid.                                                    |
 | 401 Unauthorized | Indicates that the request has not been authenticated. Check the response body for additional details. |
-| 404 Not found    | Indicates that there is no order with the specified id associated with the API client.                 |
+| 404 Not found    | Indicates that there is no order-items with the specified id associated with the API client.                 |
 
 ## API Authentication
 
