@@ -555,7 +555,6 @@ Create a new customer
 | `404 Not Found`    | Indicates that the API Path provided are invalid.   | 
 | `405 Method Not Allowed`  | Indicates that the API method provided are invalid. | 
 
-
 ### Update a customer
 ### Get all customer
 ### Get a customer
