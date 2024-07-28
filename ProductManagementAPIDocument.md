@@ -54,7 +54,7 @@ Contact:
   - [Get a single order](#Get-a-single-order)
   - [Create a new order](#Create-a-new-order)
   - [Edit an order](#Edit-an-order)
-  - [Create/Update a new order item](#Create/Update-a-new-order-item)
+  - [Create or Update a new order item](#Create/Update-a-new-order-item)
   - [Get detail order item](#Get-detail-order-item)
 - [API Authentication](#API-Authentication)
   - [Login with local account](#Login-with-local-account)
