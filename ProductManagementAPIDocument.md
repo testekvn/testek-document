@@ -522,6 +522,60 @@ Delete a single supplier.
 ### Create a sale-employee
 ### Update a sale-employee
 ### Get all sale-employee
+**`GET /employee/search`**
+
+Returns a list of employee with conditions.
+
+**Parameters**
+
+| Name           | Type         | In    | Required | Info          | Description                                                                                                                                                     |
+|----------------|--------------|-------|----------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `keyword`      | String       | query  | No       | Length: 255   | Specifies the searching keyword. Search by name, description.By default, all employee will be displayed.                                                        |
+| `empCodes`     | array[string]       | query  | No       |            | List of employee codes of employees to search.                                                                                                                  |
+| `page`         | integer       | query | No       | Min: 1     | Specifies the page number you want to get employees.                                                                                                            |
+| `limit`        | integer      | query | No       | Min: 1 ; Max: 50 | Specifies the number of product for each page. Default : 50.                                                                                                    |
+| `sort`         | array[string] | query | No       |  | Specifies the colum name which you want to sort<br/>`+` It's ASC <br/>`-` It's DESC <br/>Example: `-supplierName` ~ Sort column `supplierName` with type `DESC` |
+| `phoneNumbers` | array[string] | query | No       |  | List of phone numbers of employees to search.                                                                                                                   |
+| `status`       | string       | query | No       |  | Specifies status of employee want to filter.                                                                                                                    |
+
+**Status codes**
+
+| Status code        | Description                                         | 
+|--------------------|-----------------------------------------------------|
+| `200 OK`           | Indicates a successful response.                    | 
+| `400 Bad Request`  | Indicates that the parameters provided are invalid. | 
+| `401 Unauthorized` | Indicates that the token provided are invalid.      | 
+| `403 Forbidden`    | Indicates that the user don't have the permission.  | 
+| `404 Not Found`    | Indicates that the API Path provided are invalid.   | 
+| `405 Method Not Allowed`  | Indicates that the API method provided are invalid. | 
+Example response:
+
+```
+{
+  "code": 200,
+  "data": {
+    "count": 1,
+    "rows": [
+      {
+        "id": "3e5f7a3b-51e2-47e2-892a-3cfd0844316b",
+        "empFullName": "Nguyễn Nhân Viên",
+        "phoneNumber": "095 072 71 52",
+        "empCode": "TESTEK_1738685329591",
+        "empDoB": "11/11/1999",
+        "notes": "Nhân viên sale 01",
+        "status": "ACTIVE",
+        "group": "Sale",
+        "email": "nv01@gmail.com"
+      }
+    ],
+    "page": 1,
+    "limit": 50,
+    "totalPage": 1
+  }
+}
+```
+
+
 ### Get a sale-employee
 ### Delete a sale-employee
 
@@ -780,23 +834,45 @@ The request body needs to be in JSON format.
 
 **Parameters**
 
-| Name                | Type   | In     | Required | Description                          |
-| ------------------- | ------ | ------ | -------- | ------------------------------------ |
-| `Authorization`     | string | header | Yes      | The bearer token of the API client.  |
-| `customerId`        | UUID   | body   | Yes      | The customer id                      |
-| `address`           | string | body   | Yes      | The address of the customer.          |
-| `city`              | string | body   | Yes      | The city name of the customer. |
-| `country`           | string | body   | Yes      | The country name of the customer. |
-| `email`             | string | body   | Yes      | The email of the customer.|
-| `name`              | string | body   | Yes      | The name of the customer.|
-| `phoneNum`          | string | body   | Yes      | A valid phone number has 10 digits. |
-| `postalCode`        | string | body   | Yes      | A short series of letters and/or numbers that is part of an address |
+| Name                | Type   | In     | Required | Description                                                                                                                                                                  |
+| ------------------- | ------ | ------ |----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Authorization`     | string | header | Yes      | The bearer token of the API client.                                                                                                                                          |
+| `customerId`        | UUID   | body   | Yes      | The ID of a customer that already exists in the system.                                                                                                                      |
+| `email`           | string | body   | Yes      | The email address where the customer wishes to receive the invoice. This can be either a new email address or the one the customer originally used to register their account. |
+| `employeeId`           | UUID | body   | Yes      | The ID of a supplier that already exists in the system.                                                                                                                      |
+| `invAddress`              | string | body   | No       | The address the customer uses to enter invoice information.                                                                                                                  |
+| `phoneNum`           | string | body   | Yes      | The phone number of the customer. This can be either a new phone number or the one the customer originally used to register their account. A valid Vietnamese phone number (10 or 11 digits, starting with a valid carrier code).|
+| `shipAddress`             | string | body   | No       | The customer's shipping address. This can be either a new shipping address or the one the customer originally used to register their account.                                |
 
 Example request body:
 
 ```
 {
-  []
+  "code": 200,
+  "data": {
+    "id": "04cd5c34-6c82-4f0f-b12a-f3dc26be35f3",
+    "status": "PLACED",
+    "customerId": {
+      "id": "a675736a-141c-4de1-9617-099a799f0dad",
+      "name": "LINH CHI",
+      "phoneNum": "0586 895 445",
+      "email": "linhchi@gmail.com",
+      "country": "Việt Nam",
+      "city": "Hà Nội",
+      "address": "123 Lò Đúc, HN, VN",
+      "contact": "123 Lò Đúc, HN, VN",
+      "postalCode": "1000",
+      "status": "ACTIVE",
+      "type": "BASIC",
+      "guest": false
+    },
+    "orderItems": [],
+    "shippingAddress": "Test HN",
+    "shippingPhoneNum": "09495685845",
+    "invoiceAddress": "testek.vn",
+    "quantity": 0,
+    "amount": 0
+  }
 }
 ```
 
@@ -814,17 +890,16 @@ Example request body:
 The request body needs to be in JSON format.
 **Parameters**
 
-| Name            | Type   | In     | Required | Description                          |
-| --------------- | ------ | ------ | -------- | ------------------------------------ |
-| `Authorization` | string | header | Yes      | The bearer token of the API client.  |
-| `customerId`    | UUID   | body   | Yes      | The customer id                      |
-| `address`       | string | body   | Yes      | The address of the customer.          |
-| `city`          | string | body   | Yes      | The city name of the customer. |
-| `country`       | string | body   | Yes      | The country name of the customer. |
-| `email`         | string | body   | Yes      | The email of the customer.|
-| `name`          | string | body   | Yes      | The name of the customer.|
-| `phoneNum`      | string | body   | Yes      | A valid phone number has 10 digits. |
-| `postalCode`    | string | body   | Yes      | A short series of letters and/or numbers that is part of an address |
+| Name            | Type   | In     | Required | Description                                                                                                                                                                                                                       |
+|-----------------| ------ |--------| -------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `orderId`       | string | path   | Yes      | The ID of the order to be updated.                                                                                                                                                                                                |
+| `Authorization` | string | header | Yes      | The bearer token of the API client.                                                                                                                                                                                               |
+| `customerId`    | UUID   | body   | Yes      | The ID of a customer that already exists in the system.                                                                                                                                                                           |
+| `email`         | string | body   | Yes      | The email address where the customer wishes to receive the invoice. This can be either a new email address or the one the customer originally used to register their account.                                                     |
+| `employeeId`    | UUID | body   | Yes      | The ID of a supplier that already exists in the system.                                                                                                                                                                           |
+| `invAddress`    | string | body   | No       | The address the customer uses to enter invoice information.                                                                                                                                                                       |
+| `phoneNum`      | string | body   | Yes      | The phone number of the customer. This can be either a new phone number or the one the customer originally used to register their account. A valid Vietnamese phone number (10 or 11 digits, starting with a valid carrier code). |
+| `shipAddress`   | string | body   | No       | The customer's shipping address. This can be either a new shipping address or the one the customer originally used to register their account.                                                                                     |
 
 **Status codes**
 
@@ -839,7 +914,31 @@ Example request body:
 
 ```
 {
-[]
+  "code": 200,
+  "data": {
+    "id": "6cc99021-e121-4153-88c5-fa020cf01062",
+    "status": "PLACED",
+    "customerId": {
+      "id": "a675736a-141c-4de1-9617-099a799f0dad",
+      "name": "LINH CHI",
+      "phoneNum": "0586 895 445",
+      "email": "linhchi@gmail.com",
+      "country": "Việt Nam",
+      "city": "Hà Nội",
+      "address": "123 Lò Đúc, HN, VN",
+      "contact": "123 Lò Đúc, HN, VN",
+      "postalCode": "1000",
+      "status": "ACTIVE",
+      "type": "BASIC",
+      "guest": false
+    },
+    "orderItems": [],
+    "shippingAddress": "",
+    "shippingPhoneNum": "0956858451",
+    "invoiceAddress": "testek.vn update nhe",
+    "quantity": 0,
+    "amount": 0
+  }
 }
 ```
 
@@ -851,14 +950,14 @@ The request body needs to be in JSON format.
 
 **Parameters**
 
-| Name            | Type   | In     | Required | Description                          |
-| --------------- | ------ | ------ | -------- | ------------------------------------ |
-| `Authorization` | string | header | Yes      | The bearer token of the API client.  |
-| `orderId`       | UUID   | path   | Yes      | The order id.                        |
-| `discountRate`  | string | body   | Yes      | A rate used for discounting bills of exchange            |
-| `productId`     | UUID   | body   | Yes      | Specifies the product id with status ACTIVE
-| `quantity`      | string | body   | Yes      | An amount or a number of product. |
-| `variant`       | string | body   | No       | Specifies the variant of something that is slightly different from other similar things |
+| Name            | Type   | In     | Required | Description                                                                                                                  |
+| --------------- |--------|--------| -------- |------------------------------------------------------------------------------------------------------------------------------|
+| `Authorization` | string | header | Yes      | The bearer token of the API client.                                                                                          |
+| `orderId`       | UUID   | body   | Yes      | The ID of the order to which products will be added.                                                                         |
+| `discountRate`  | string | body   | Yes      | A rate used for discounting bills of exchange, the discount rate ranges from 0 to 1.                                         |
+| `productId`     | UUID   | body   | Yes      | The ID of the product to be added to the order, must be Active and have sufficient stock available to be added to the order. |
+| `quantity`      | int    | body   | Yes      | An amount or a number of product.                                                                                            |
+| `variant`       | string | body   | No       | Specifies the variant of something that is slightly different from other similar things                                      |
 
 **Status codes**
 
@@ -873,7 +972,51 @@ Example response:
 
 ```
 {
-[]
+  "code": 200,
+  "data": {
+    "id": "6cc99021-e121-4153-88c5-fa020cf01062",
+    "status": "PLACED",
+    "orderItems": [
+      {
+        "id": "c82fced5-9bc4-4ebc-92ec-e562262fdbb6",
+        "quantity": 3,
+        "discountRate": 0.1,
+        "variant": "NO",
+        "product": {
+          "id": "6d3fef27-569e-4767-b76e-9061a112af7c",
+          "productCode": "MVHVIEI1XP0012",
+          "productName": "lam_123451",
+          "productDesc": "lam_123451",
+          "status": "ACTIVE",
+          "quantity": 400,
+          "category": {
+            "id": "01ba3470-81ea-40b3-9698-a92cec54b400",
+            "categoryName": "Máy giặt",
+            "cateDesc": "Trải nghiệm các công nghệ mới từ các quốc gia hàng đầu về thiết bị gia dụng",
+            "status": "ACTIVE"
+          },
+          "supplier": {
+            "id": "a913c855-5f57-4630-8743-9c427a876a20",
+            "supName": "Canon VietNam",
+            "supContactName": "Canon Electric Corp",
+            "supAddress": "Nhật Bản",
+            "supCity": "Tokyo",
+            "supPostalCode": "16000",
+            "supCountry": "Nhật Bản",
+            "supPhone": "0971903563"
+          },
+          "unit": "chiec",
+          "price": 500
+        },
+        "status": "ACTIVE"
+      }
+    ],
+    "shippingAddress": "",
+    "shippingPhoneNum": "0956858451",
+    "invoiceAddress": "testek.vn update nhe",
+    "quantity": 3,
+    "amount": 150
+  }
 }
 ```
 
@@ -883,10 +1026,10 @@ Example response:
 
 **Parameters**
 
-| Name            | Type   | In     | Required | Description                         |
-| --------------- | ------ | ------ | -------- | ----------------------------------- |
+| Name            | Type   | In     | Required | Description      |
+| --------------- | ------ | ------ | -------- |------------------|
 | `Authorization` | string | header | Yes      | The bearer token of the API client. |
-| `orderItemId `  | UUID   | path   | Yes      | The order-items id.                 |
+| `orderItemId `  | UUID   | path   | Yes      | The ID refers to the order item that has been added to the order in the system.|
 
 **Status codes**
 
@@ -897,6 +1040,46 @@ Example response:
 | 401 Unauthorized | Indicates that the request has not been authenticated. Check the response body for additional details. |
 | 404 Not found    | Indicates that there is no order-items with the specified id associated with the API client.                 |
 
+Example response:
+
+```
+{
+  "code": 200,
+  "data": {
+    "id": "c82fced5-9bc4-4ebc-92ec-e562262fdbb6",
+    "quantity": 3,
+    "discountRate": 0.1,
+    "variant": "NO",
+    "product": {
+      "id": "6d3fef27-569e-4767-b76e-9061a112af7c",
+      "productCode": "MVHVIEI1XP0012",
+      "productName": "lam_123451",
+      "productDesc": "lam_123451",
+      "status": "ACTIVE",
+      "quantity": 400,
+      "category": {
+        "id": "01ba3470-81ea-40b3-9698-a92cec54b400",
+        "categoryName": "Máy giặt",
+        "cateDesc": "Trải nghiệm các công nghệ mới từ các quốc gia hàng đầu về thiết bị gia dụng",
+        "status": "ACTIVE"
+      },
+      "supplier": {
+        "id": "a913c855-5f57-4630-8743-9c427a876a20",
+        "supName": "Canon VietNam",
+        "supContactName": "Canon Electric Corp",
+        "supAddress": "Nhật Bản",
+        "supCity": "Tokyo",
+        "supPostalCode": "16000",
+        "supCountry": "Nhật Bản",
+        "supPhone": "0971903563"
+      },
+      "unit": "chiec",
+      "price": 500
+    },
+    "status": "ACTIVE"
+  }
+}
+```
 ## API Authentication
 
 Some endpoints may require authentication. To submit or view an order, you need to register your account and login to obtain an access token.
