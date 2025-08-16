@@ -1,6 +1,6 @@
 name: Vincent - Automated API tests using Postman CLI
 
-#on: push
+on: push
 
 jobs:
   automated-api-tests:
